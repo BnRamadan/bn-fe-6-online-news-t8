@@ -7,10 +7,8 @@ const NewsArea = ({ category }) => {
 
   useEffect(() => {
     setLoading(true);
-    // Add cors-anywhere proxy URL for development
-    let url = `https://cors-anywhere.herokuapp.com/https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${import.meta.env.VITE_API_KEY}`;
-    
-    fetch(url)
+    // Use your backend API endpoint
+    fetch(`http://localhost:5000/api/news?category=${category}`)
       .then((response) => response.json())
       .then((data) => {
         setArticles(data.articles || []);
