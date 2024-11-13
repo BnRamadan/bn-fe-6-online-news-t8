@@ -2,15 +2,25 @@ import { useEffect, useState } from 'react';
 import NewsItems from './NewsItems';
 
 const NewsArea = ({ category }) => {
+  // Initialize with empty array to avoid undefined
   const [articles, setArticles] = useState([]);
+  // Add loading state to handle the fetch period
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${
-      import.meta.env.VITE_API_KEY
-    }`;
+    setLoading(true);
+    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${import.meta.env.VITE_API_KEY}`;
+    
     fetch(url)
       .then((response) => response.json())
-      .then((data) => setArticles(data.articles));
+      .then((data) => {
+        setArticles(data.articles || []); // Use empty array as fallback
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching news:', error);
+        setLoading(false);
+      });
   }, [category]);
 
   return (
@@ -18,8 +28,11 @@ const NewsArea = ({ category }) => {
       <h2 className="text-center">
         <span className="badge bg-danger">Latest News</span>
       </h2>
-      {articles.map((news, index) => {
-        return (
+      
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        articles?.map((news, index) => (
           <NewsItems
             key={index}
             title={news.title}
@@ -27,8 +40,8 @@ const NewsArea = ({ category }) => {
             src={news.urlToImage}
             url={news.url}
           />
-        );
-      })}
+        ))
+      )}
     </div>
   );
 };
