@@ -2,19 +2,18 @@ import { useEffect, useState } from 'react';
 import NewsItems from './NewsItems';
 
 const NewsArea = ({ category }) => {
-  // Initialize with empty array to avoid undefined
   const [articles, setArticles] = useState([]);
-  // Add loading state to handle the fetch period
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    let url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${import.meta.env.VITE_API_KEY}`;
+    // Add cors-anywhere proxy URL for development
+    let url = `https://cors-anywhere.herokuapp.com/https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${import.meta.env.VITE_API_KEY}`;
     
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        setArticles(data.articles || []); // Use empty array as fallback
+        setArticles(data.articles || []);
         setLoading(false);
       })
       .catch((error) => {
